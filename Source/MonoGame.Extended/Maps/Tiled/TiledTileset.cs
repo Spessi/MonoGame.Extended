@@ -22,6 +22,9 @@ namespace MonoGame.Extended.Maps.Tiled
             Properties = new TiledProperties();
             _tiles = new List<TiledTilesetTile>();
 
+            if (texture == null)
+                return;
+
             var id = FirstId;
             _regions = new Dictionary<int, TextureRegion2D>();
 

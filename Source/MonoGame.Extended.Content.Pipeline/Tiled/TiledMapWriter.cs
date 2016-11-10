@@ -36,8 +36,14 @@ namespace MonoGame.Extended.Content.Pipeline.Tiled
             foreach (var tileset in map.Tilesets)
             {
                 // ReSharper disable once AssignNullToNotNullAttribute
-                writer.Write(Path.ChangeExtension(tileset.Image.Source, null));
-                writer.Write(HexToColor(tileset.Image.Trans));
+                if (tileset.Image == null) {
+                    writer.Write(string.Empty);
+                    writer.Write(Color.White);
+                }
+                else {
+                    writer.Write(Path.ChangeExtension(tileset.Image.Source, null));
+                    writer.Write(HexToColor(tileset.Image.Trans));
+                }
                 writer.Write(tileset.FirstGid);
                 writer.Write(tileset.TileWidth);
                 writer.Write(tileset.TileHeight);

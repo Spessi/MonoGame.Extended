@@ -31,10 +31,15 @@ namespace MonoGame.Extended.Maps.Tiled
 
             for (var i = 0; i < tilesetCount; i++)
             {
-                var textureAssetName = reader.GetRelativeAssetPath(reader.ReadString());
-                var texture = reader.ContentManager.Load<Texture2D>(textureAssetName);
+                Texture2D texture = null;
+                var textureAssetNameRaw = reader.ReadString();
                 var trans = reader.ReadColor();
-                texture = MakeColorTransparent(texture.GraphicsDevice, texture, trans);
+                if (!string.IsNullOrEmpty(textureAssetNameRaw)) 
+                {
+                    var textureAssetName = reader.GetRelativeAssetPath(textureAssetNameRaw);
+                    texture = reader.ContentManager.Load<Texture2D>(textureAssetName);
+                    texture = MakeColorTransparent(texture.GraphicsDevice, texture, trans);
+                }
 
                 var tileset = tiledMap.CreateTileset(
                     texture,
@@ -48,7 +53,10 @@ namespace MonoGame.Extended.Maps.Tiled
                 for (var j = 0; j < tileSetTileCount; j++)
                 {
                     var tileId = reader.ReadInt32();
-                    tileId = tileset.FirstId + tileId - 1;
+                    if (string.IsNullOrEmpty(textureAssetNameRaw))
+                        tileId = tileset.FirstId + tileId;  // Collection of images indexes start at 0
+                    else
+                        tileId = tileset.FirstId + tileId - 1;
                     var tileSetTile = tileset.CreateTileSetTile(tileId);
                     var tileSetTileFrameCount = reader.ReadInt32();
                     for (var k = 0; k < tileSetTileFrameCount; k++)
